@@ -2,27 +2,226 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lab Instrument Identifier</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-section {
+            margin-bottom: 30px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .file-input-label:hover {
+            background: linear-gradient(45deg, #2980b9, #1f618d);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(45deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .error-message {
+            background: rgba(244, 67, 54, 0.1);
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #f44336;
+            font-weight: 500;
+        }
+
+        .result-section {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .result-section h3 {
+            color: #2c3e50;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .uploaded-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin: 20px auto;
+            display: block;
+        }
+
+        .response-text {
+            background: rgba(52, 152, 219, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #3498db;
+            color: #2c3e50;
+            line-height: 1.6;
+            font-size: 1.05em;
+            margin-top: 20px;
+        }
+
+        .icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h2 {
+                font-size: 1.8em;
+            }
+            
+            .file-input-label, .submit-btn {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h2>Upload a Lab Instrument Image</h2>
-    <form method="post" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*" required>
-        <button type="submit">Identify</button>
-    </form>
+    <div class="container">
+        <div class="icon">🔬</div>
+        <h2>Lab Instrument Identifier</h2>
+        
+        <div class="upload-section">
+            <form method="post" enctype="multipart/form-data">
+                <div class="file-input-wrapper">
+                    <input type="file" name="image" accept="image/*" required class="file-input" id="fileInput">
+                    <label for="fileInput" class="file-input-label">📁 Choose Image File</label>
+                </div>
+                <br>
+                <button type="submit" class="submit-btn">🔍 Identify Instrument</button>
+            </form>
+        </div>
 
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
+        {% if error %}
+            <div class="error-message">
+                ⚠️ {{ error }}
+            </div>
+        {% endif %}
 
-    {% if image_url %}
-        <h3>Uploaded Image:</h3>
-        <img src="{{ image_url }}" alt="Uploaded image" width="300"><br>
-    {% endif %}
+        {% if image_url %}
+            <div class="result-section">
+                <h3>📸 Uploaded Image:</h3>
+                <img src="{{ image_url }}" alt="Uploaded lab instrument" class="uploaded-image">
+            </div>
+        {% endif %}
 
-    {% if response_text %}
-        <h3>Gemini Says:</h3>
-        <p>{{ response_text }}</p>
-    {% endif %}
+        {% if response_text %}
+            <div class="result-section">
+                <h3>🤖 Analysis Results:</h3>
+                <div class="response-text">
+                    {{ response_text }}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Add file name display functionality
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name;
+            const label = document.querySelector('.file-input-label');
+            if (fileName) {
+                label.textContent = `📁 ${fileName}`;
+            } else {
+                label.textContent = '📁 Choose Image File';
+            }
+        });
+
+        // Add form submission loading state
+        document.querySelector('form').addEventListener('submit', function() {
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.textContent = '🔄 Analyzing...';
+            submitBtn.disabled = true;
+        });
+    </script>
 </body>
 </html>
